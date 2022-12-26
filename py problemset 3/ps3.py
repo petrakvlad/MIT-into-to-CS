@@ -23,7 +23,7 @@ SCRABBLE_LETTER_VALUES = {
 # Helper code
 # (you don't need to understand this helper code)
 
-WORDLIST_FILENAME = "words.txt"
+WORDLIST_FILENAME = "/mnt/c/Users/Vlad/Documents/GitHub/someproj/py problemset 3/words.txt"
 
 def load_words():
     """
@@ -91,9 +91,17 @@ def get_word_score(word, n):
     n: int >= 0
     returns: int >= 0
     """
-    
-    pass  # TO DO... Remove this line when you implement this function
+    word = word.lower()
+    points_inword = 0
+    for letter in word:
+        points_inword = points_inword + SCRABBLE_LETTER_VALUES[letter]
+    one_option = 7 * len(word) - 3 * (n - len(word))
+    right_hand_side = one_option if one_option > 1 else 1
+    total = points_inword * right_hand_side
+    return total
+    # TO DO... Remove this line when you implement this function
 
+#print(get_word_score("weed", 6))
 #
 # Make sure you understand how this function works and what it does!
 #
@@ -167,9 +175,18 @@ def update_hand(hand, word):
     hand: dictionary (string -> int)    
     returns: dictionary (string -> int)
     """
+    hand_copy = hand.copy()
+    word = word.lower()
+    for letter in word:
+        if letter in hand_copy.keys():
+            if hand_copy[letter] == 0:
+                continue
+            else:
+                hand_copy[letter] = hand_copy[letter] - 1
+    return hand_copy
 
-    pass  # TO DO... Remove this line when you implement this function
-
+    # TO DO... Remove this line when you implement this function
+#print(update_hand({"a": 1, "b": 2, "c": 1, "d": 1}, "Abcc"))
 #
 # Problem #3: Test word validity
 #
@@ -184,9 +201,25 @@ def is_valid_word(word, hand, word_list):
     word_list: list of lowercase strings
     returns: boolean
     """
+    handcopy = hand.copy()
+    word = word.lower()
 
-    pass  # TO DO... Remove this line when you implement this function
+    if word not in word_list:
+        return False
 
+    for letter in word:
+        if letter in handcopy.keys():
+            if handcopy[letter] == 0:
+                return False
+            else:
+                handcopy[letter] = handcopy[letter] - 1
+        else:
+            return False
+    return True
+
+# TO DO... Remove this line when you implement this function
+wordlist = load_words()
+print(is_valid_word("Abele", {"a": 1, "b": 2, "e": 1, "l": 1}, wordlist))
 #
 # Problem #5: Playing a hand
 #
