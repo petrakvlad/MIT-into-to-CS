@@ -218,8 +218,8 @@ def is_valid_word(word, hand, word_list):
     return True
 
 # TO DO... Remove this line when you implement this function
-wordlist = load_words()
-print(is_valid_word("Abele", {"a": 1, "b": 2, "e": 1, "l": 1}, wordlist))
+#wordlist = load_words()
+#print(is_valid_word("Abele", {"a": 1, "b": 2, "e": 1, "l": 1}, wordlist))
 #
 # Problem #5: Playing a hand
 #
