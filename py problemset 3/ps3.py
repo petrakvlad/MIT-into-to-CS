@@ -16,7 +16,7 @@ CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
 
 SCRABBLE_LETTER_VALUES = {
-    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
+    '*': 0, 'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
 }
 
 # -----------------------------------
@@ -144,16 +144,16 @@ def deal_hand(n):
     hand={}
     num_vowels = int(math.ceil(n / 3))
 
-    for i in range(num_vowels):
+    for i in range(num_vowels - 1):
         x = random.choice(VOWELS)
         hand[x] = hand.get(x, 0) + 1
     
     for i in range(num_vowels, n):    
         x = random.choice(CONSONANTS)
         hand[x] = hand.get(x, 0) + 1
+    hand["*"] = hand.get("*", 0) + 1
     
     return hand
-
 #
 # Problem #2: Update a hand by removing letters
 #
@@ -203,9 +203,17 @@ def is_valid_word(word, hand, word_list):
     """
     handcopy = hand.copy()
     word = word.lower()
-
-    if word not in word_list:
-        return False
+    any = 0
+    if "*" in word:
+        for letter in VOWELS:
+            wordcopy = word.replace("*", letter)
+            if wordcopy in word_list:
+                any = any + 1
+        if any == 0:
+            return False
+    else:
+        if word not in word_list:
+            return False
 
     for letter in word:
         if letter in handcopy.keys():
@@ -219,7 +227,7 @@ def is_valid_word(word, hand, word_list):
 
 # TO DO... Remove this line when you implement this function
 #wordlist = load_words()
-#print(is_valid_word("Abele", {"a": 1, "b": 2, "e": 1, "l": 1}, wordlist))
+#print(is_valid_word("Ab*le", {"a": 1, "b": 2, "e": 2, "l": 1, "*": 1}, wordlist))
 #
 # Problem #5: Playing a hand
 #
@@ -230,11 +238,54 @@ def calculate_handlen(hand):
     hand: dictionary (string-> int)
     returns: integer
     """
-    
-    pass  # TO DO... Remove this line when you implement this function
+    count = 0
+    allkeys = hand.keys()
+    for each in allkeys:
+        if hand[each] != 0:
+            count = count + 1
+    return count
+    # TO DO... Remove this line when you implement this function
+
+#calculate_handlen({"a": 1, "b": 2, "e": 2, "l": 1})
 
 def play_hand(hand, word_list):
 
+    #def get_word_score(word, n):
+    #def display_hand(hand):
+    #def deal_hand(n):
+    #def update_hand(hand, word):
+    #def is_valid_word(word, hand, word_list):
+    #def calculate_handlen(hand):
+    """
+    hand_copy = hand.copy()
+    total_points = 0
+    print("Current hand: ", end = "")
+    display_hand(hand)
+    hand_leng = calculate_handlen(hand_copy)
+
+    user_input = input("Enter word: ")
+    while user_input != "!!":
+        word_valid = is_valid_word(user_input, hand_copy, word_list)
+        if word_valid == False:
+            print("That is not a valid word. Please choose another word.")
+            hand_copy = update_hand(hand_copy, user_input)
+            hand_leng = calculate_handlen(hand_copy)
+        else:
+            word_score = get_word_score(user_input, hand_leng)
+            total_points = total_points + word_score
+            hand_copy = update_hand(hand_copy, user_input)
+            hand_leng = calculate_handlen(hand_copy)
+            print("\"", user_input, "\"", " earned ", word_score, "points. Total: ", total_points, " points.")
+        if hand_leng == 0:
+            print("Ran out of letters. Total score: ", total_points)
+            break
+        else:
+            print("Current hand: ", end = "")
+            display_hand(hand_copy)
+            user_input = input("Enter word: ")
+    print("Total score: ", total_points)
+    return total_points
+    """
     """
     Allows the user to play the given hand, as follows:
 
@@ -263,40 +314,47 @@ def play_hand(hand, word_list):
       returns: the total score for the hand
       
     """
-    
-    # BEGIN PSEUDOCODE <-- Remove this comment when you implement this function
+    hand_copy = hand.copy()
+    hand_leng = calculate_handlen(hand_copy)
     # Keep track of the total score
-    
+    total_points = 0
     # As long as there are still letters left in the hand:
-    
+    while hand_leng != 0:
         # Display the hand
-        
+        print("Current hand: ", end = "")
+        display_hand(hand_copy)
         # Ask user for input
-        
+        user_input = input("Enter word: ")
         # If the input is two exclamation points:
-        
+        if user_input == "!!":
             # End the game (break out of the loop)
-
+            break
             
         # Otherwise (the input is not two exclamation points):
-
+        else:
             # If the word is valid:
-
+            if is_valid_word(user_input, hand_copy, word_list):
                 # Tell the user how many points the word earned,
+                word_score = get_word_score(user_input, hand_leng)
+                total_points = total_points + word_score
+                print("\"", user_input, "\"", " earned ", word_score, "points. Total: ", total_points, " points.")
                 # and the updated total score
-
             # Otherwise (the word is not valid):
+            else:
                 # Reject invalid word (print a message)
+                print("That is not a valid word. Please choose another word.")
                 
             # update the user's hand by removing the letters of their inputted word
-            
+            hand_copy = update_hand(hand_copy, user_input)
+            hand_leng = calculate_handlen(hand_copy)
 
     # Game is over (user entered '!!' or ran out of letters),
     # so tell user the total score
-
+    print("Total score: ", total_points)
+    return total_points
     # Return the total score as result of function
 
-
+play_hand({"a": 1, "i": 1, "c": 1, "f": 1, "*": 1, "t": 1, "x": 1}, load_words())
 
 #
 # Problem #6: Playing a game
@@ -374,5 +432,6 @@ def play_game(word_list):
 # when the program is run directly, instead of through an import statement
 #
 if __name__ == '__main__':
-    word_list = load_words()
-    play_game(word_list)
+    #word_list = load_words()
+    #play_game(word_list)
+    print("all good")
