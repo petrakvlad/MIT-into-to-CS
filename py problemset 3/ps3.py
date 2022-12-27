@@ -354,7 +354,7 @@ def play_hand(hand, word_list):
     return total_points
     # Return the total score as result of function
 
-play_hand({"a": 1, "i": 1, "c": 1, "f": 1, "*": 1, "t": 1, "x": 1}, load_words())
+#play_hand({"a": 1, "i": 1, "c": 1, "f": 1, "*": 1, "t": 1, "x": 1}, load_words())
 
 #
 # Problem #6: Playing a game
@@ -366,6 +366,7 @@ play_hand({"a": 1, "i": 1, "c": 1, "f": 1, "*": 1, "t": 1, "x": 1}, load_words()
 #
 
 def substitute_hand(hand, letter):
+    
     """ 
     Allow the user to replace all copies of one letter in the hand (chosen by user)
     with a new letter chosen from the VOWELS and CONSONANTS at random. The new letter
@@ -373,7 +374,7 @@ def substitute_hand(hand, letter):
     already in the hand.
 
     If user provide a letter not in the hand, the hand should be the same.
-
+    
     Has no side effects: does not mutate hand.
 
     For example:
@@ -387,14 +388,46 @@ def substitute_hand(hand, letter):
     letter: string
     returns: dictionary (string -> int)
     """
+    letter_not_to_include = ''.join(list(hand.keys()))
+    hand_copy = hand.copy()
+
+    if letter not in letter_not_to_include:
+        return hand_copy
+
+
+    copy_vowels = VOWELS
+    copy_conson = CONSONANTS
+
+    for letterr in letter_not_to_include:
+        copy_vowels = copy_vowels.replace(letterr, "")
+    for letterr in letter_not_to_include:
+        copy_conson = copy_conson.replace(letterr, "")
+
+
     
-    pass  # TO DO... Remove this line when you implement this function
-       
+    number_of_occurences = hand[letter]
+    num_rand = random.random()
+
+    if num_rand > 0.5:
+        new_letter = random.choice(copy_vowels)
+    else:
+        new_letter = random.choice(copy_conson)
+
+    hand_copy.pop(letter)
+    hand_copy[new_letter] = number_of_occurences
+
+    return hand_copy
+
+
+
+
+    # TO DO... Remove this line when you implement this function
+#print(substitute_hand({"a": 2, "c": 1, "f": 1, "*": 1, "t": 1, "x": 1}, "m"))
     
 def play_game(word_list):
     """
     Allow the user to play a series of hands
-
+    
     * Asks the user to input a total number of hands
 
     * Accumulates the score for each hand into a total score for the 
@@ -421,8 +454,38 @@ def play_game(word_list):
 
     word_list: list of lowercase strings
     """
-    
-    print("play_game not implemented.") # TO DO... Remove this line when you implement this function
+    total_with_replays = 0
+    substitute_options = 1
+    replay_option = 1
+    num_hands = int(input("Enter total number of hands: "))
+    total_score_all = 0
+    for sets in range(num_hands):
+        hand_new = deal_hand(HAND_SIZE)
+        print("Current hand: ", end = "")
+        display_hand(hand_new)
+        if substitute_options != 0:
+            substit = input("Would you like to substitute a letter? ")
+            if substit == "yes":
+                substitute_options = 0
+                letter_sub = input("Which letter would you like to replace: ")
+                hand_new = substitute_hand(hand_new, letter_sub)
+        first_hand_play = play_hand(hand_new, word_list)
+        if replay_option != 0:
+            replays = input("Would you like to replay hand? ")
+            if replays == "yes":
+                replay_option = 0
+                second_hand_play = play_hand(hand_new, word_list)
+            else:
+                second_hand_play = 0
+        if first_hand_play > second_hand_play: 
+            total_with_replays = first_hand_play
+        else:
+            total_with_replays = second_hand_play
+        print("Total for the hand is: ", total_with_replays)
+        total_score_all = total_score_all + total_with_replays
+    print("Total for the game is ", total_score_all)
+
+    # TO DO... Remove this line when you implement this function
     
 
 
@@ -432,6 +495,5 @@ def play_game(word_list):
 # when the program is run directly, instead of through an import statement
 #
 if __name__ == '__main__':
-    #word_list = load_words()
-    #play_game(word_list)
-    print("all good")
+    word_list = load_words()
+    play_game(word_list)
