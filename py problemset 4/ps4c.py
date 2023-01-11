@@ -51,7 +51,7 @@ def is_word(word_list, word):
 
 ### END HELPER CODE ###
 
-WORDLIST_FILENAME = 'words.txt'
+WORDLIST_FILENAME = '/mnt/c/Users/Vlad/Documents/GitHub/someproj/py problemset 4/words.txt'
 
 # you may find these constants helpful
 VOWELS_LOWER = 'aeiou'
@@ -70,7 +70,9 @@ class SubMessage(object):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        #delete this line and replace with your code here
+        self.message_text = text
+        self.valid_words = load_words(WORDLIST_FILENAME)
     
     def get_message_text(self):
         '''
@@ -78,7 +80,8 @@ class SubMessage(object):
         
         Returns: self.message_text
         '''
-        pass #delete this line and replace with your code here
+        #delete this line and replace with your code here
+        return self.message_text
 
     def get_valid_words(self):
         '''
@@ -87,7 +90,9 @@ class SubMessage(object):
         
         Returns: a COPY of self.valid_words
         '''
-        pass #delete this line and replace with your code here
+
+        #delete this line and replace with your code here
+        return self.valid_words
                 
     def build_transpose_dict(self, vowels_permutation):
         '''
@@ -109,7 +114,17 @@ class SubMessage(object):
                  another letter (string). 
         '''
         
-        pass #delete this line and replace with your code here
+        #delete this line and replace with your code here
+        dict = {}
+        for consl in CONSONANTS_LOWER:
+            dict[consl] = consl
+        for consu in CONSONANTS_UPPER:
+            dict[consu] = consu
+        for vowl in VOWELS_LOWER:
+            dict[vowl] = vowels_permutation[VOWELS_LOWER.index(vowl)]
+        for vowu in VOWELS_UPPER:
+            dict[vowu] = vowels_permutation[VOWELS_UPPER.index(vowu)].upper()
+        return dict
     
     def apply_transpose(self, transpose_dict):
         '''
@@ -118,8 +133,17 @@ class SubMessage(object):
         Returns: an encrypted version of the message text, based 
         on the dictionary
         '''
+        newmess = ""
+        oldmess = self.get_message_text()
         
-        pass #delete this line and replace with your code here
+        for letr in oldmess:
+            if letr.isalpha():
+                newmess = newmess + transpose_dict[letr]
+            else:
+                newmess = newmess + letr
+        
+        return newmess
+        #delete this line and replace with your code here
         
 class EncryptedSubMessage(SubMessage):
     def __init__(self, text):
@@ -132,7 +156,8 @@ class EncryptedSubMessage(SubMessage):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        SubMessage.__init__(self, text)
+        #delete this line and replace with your code here
 
     def decrypt_message(self):
         '''
@@ -152,13 +177,36 @@ class EncryptedSubMessage(SubMessage):
         
         Hint: use your function from Part 4A
         '''
-        pass #delete this line and replace with your code here
-    
+        #delete this line and replace with your code here
+        permutations = get_permutations(VOWELS_LOWER)
+
+        variations = {}
+
+        for eachone in permutations:
+            variations[eachone] = 0
+
+        for perm in permutations:
+            newmessage = self.apply_transpose(self.build_transpose_dict(perm))
+            for k in newmessage.split():
+                k = ''.join(filter(str.isalpha, k)) 
+                if is_word(self.get_valid_words(), k):
+                    variations[perm] = variations[perm] + 1
+
+        max_value = max(variations.values())
+        if max_value == 0:
+            return self.get_message_text()
+        else:
+            print("max value", max_value)
+            value = [f for f in variations if variations[f]== max_value]
+            print("max value keys:", value)
+            return self.apply_transpose(self.build_transpose_dict(value[0]))
+        
+
 
 if __name__ == '__main__':
 
     # Example test case
-    message = SubMessage("Hello World!")
+    message = SubMessage("mortuaries, this is my name/ and you are welcome")
     permutation = "eaiuo"
     enc_dict = message.build_transpose_dict(permutation)
     print("Original message:", message.get_message_text(), "Permutation:", permutation)
@@ -166,5 +214,4 @@ if __name__ == '__main__':
     print("Actual encryption:", message.apply_transpose(enc_dict))
     enc_message = EncryptedSubMessage(message.apply_transpose(enc_dict))
     print("Decrypted message:", enc_message.decrypt_message())
-     
     #TODO: WRITE YOUR TEST CASES HERE

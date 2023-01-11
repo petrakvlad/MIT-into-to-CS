@@ -300,7 +300,7 @@ if __name__ == '__main__':
     print(f)
     '''
 
-    plaintext = PlaintextMessage('hello this is me, you too', 5)
+    plaintext = PlaintextMessage('wow you are stupid', 20)
     print('Encrypted:', plaintext.get_message_text_encrypted())
 
     #Example test case (CiphertextMessage)

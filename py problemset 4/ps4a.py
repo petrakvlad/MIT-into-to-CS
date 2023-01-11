@@ -30,14 +30,16 @@ def get_permutations(sequence):
     head = sequence[0]
     tail = sequence[1:]
 
-    results = []
-    permuts = []
+    permutations = []
 
-    results = get_permutations(tail)
-    for each in results:
-        for i in range(len(results) + 1):
-            permuts.append(each[:i]+head+each[i:])
-    return permuts
+    newone = get_permutations(tail)
+
+    for each in newone:
+        for i in range(len(each) + 1):
+            permutations.append(each[:i]+head+each[i:])
+
+
+    return permutations
 
 
 
@@ -45,15 +47,16 @@ def get_permutations(sequence):
     #delete this line and replace with your code here
 
 if __name__ == '__main__':
+    print("woo")
 #   #EXAMPLE
-    #example_input = 'abc'
-  #  print('Input:', example_input)
-  #  print('Expected Output:', ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'])
-  #  print('Actual Output:', get_permutations(example_input))
+    example_input = 'aeiou'
+    print('Input:', example_input)
+    print('Expected Output:', ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'])
+    result = get_permutations(example_input)
+    count = 0
+    for i in result:
+        count = count + 1
+    print('Actual Output:', result)
+    print(count)
     #op = get_permutations(example_input)
     #print(op)
-#    # Put three example test cases here (for your sanity, limit your inputs
-#    to be three characters or fewer as you will have n! permutations for a 
-#    sequence of length n)
-
-    #delete this line and replace with your code here
