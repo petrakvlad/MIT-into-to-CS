@@ -1,0 +1,62 @@
+from ps5 import *
+
+def read_trigger_ig(filename):
+    """
+    filename: the name of a trigger configuration file
+
+    Returns: a list of trigger objects specified by the trigger configuration
+        file.
+    """
+    # We give you the code to read in the file and eliminate blank lines and
+    # comments. You don't need to know how it works for now!
+    trigger_file = open(filename, 'r')
+    lines = []
+    for line in trigger_file:
+        line = line.rstrip()
+        if not (len(line) == 0 or line.startswith('//')):
+            lines.append(line)
+
+    # TODO: Problem 11
+    # line is the list of lines that you need to parse and for which you need
+    # to build triggers
+
+     # for now, print it so you see what it contains!
+    
+    key_map = {"TITLE": TitleTrigger,
+            "DESCRIPTION": DescriptionTrigger,
+            "AFTER": AfterTrigger,
+            "BEFORE": BeforeTrigger,
+            "NOT": NotTrigger,
+            "AND": AndTrigger,
+            "OR": OrTrigger
+            }
+
+    triggers = []
+    objects_dict = {}
+
+    def linereader (line):
+        separated = []
+        for n in line.split(","):
+            separated.append(n)
+
+        first_el = separated[0]
+
+        if separated[0] == "ADD":
+            for f in separated[1:]:
+                triggers.append(objects_dict[f])
+        else:
+            if separated[1] == "AND" or separated[1] == "OR":
+                separated[0] = key_map[separated[1]](objects_dict[separated[2]], objects_dict[separated[3]])
+            else:
+                separated[0] = key_map[separated[1]](separated[2])
+        print(separated)
+        objects_dict[first_el] = separated[0]
+
+    for line in lines:
+        linereader(line)
+    
+
+    return triggers
+
+fileus = "/mnt/c/Users/Vlad/Documents/GitHub/someproj/py problemset 5/triggers.txt"
+print(read_trigger_ig(fileus))
