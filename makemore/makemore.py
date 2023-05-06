@@ -5,15 +5,14 @@ import torch.nn.functional as F
 # Bigram language model
 
 words = open("/mnt/c/Users/Vlad/Documents/GitHub/someproj/makemore/names.txt", "r").read().splitlines()
-print(len(words))
 
 # N = torch.zeros((27,27), dtype=torch.int32)
 
-chars = sorted(set(''.join(words)))
-stoi = {s:i+1 for i, s in enumerate(chars)}
-stoi[','] = 0
+# chars = sorted(set(''.join(words)))
+# stoi = {s:i+1 for i, s in enumerate(chars)}
+# stoi[','] = 0
 
-itos = {i:s for s,i in stoi.items()}
+# itos = {i:s for s,i in stoi.items()}
 
 # for w in words:
 #     chr = [','] + list(w) + [',']
@@ -61,38 +60,90 @@ itos = {i:s for s,i in stoi.items()}
 # l = negloglike/n
 # print(l)
 
-xs, ys = [],[]
-numeex = 0
+# xs, ys = [],[]
+# numeex = 0
+
+# for w in words:
+#     chr = [','] + list(w) + [',']
+#     for w1, w2 in zip(chr, chr[1:]):
+#         xs.append(stoi[w1])
+#         ys.append(stoi[w2])
+#         numeex += 1
+# xs = torch.tensor(xs)# input letters tensor
+# ys = torch.tensor(ys)# correct output letters tensor
+# print("number of examples", numeex)
+
+
+# # initialise random initial weights for a neuron, each neuron takes 27 inputs
+# g = torch.Generator().manual_seed(2147483647)
+# w = torch.randn((27,27), generator = g, requires_grad=True)
+
+# for i in range(100):
+#     #forward pass
+#     xenc = F.one_hot(xs, num_classes = 27).float() # encode tensor of integers into tensor of (5, 27) dims
+#     logits = xenc@w
+#     counts = torch.exp(logits)
+#     probs = counts/counts.sum(1, keepdims = True)#probabilities for the next character
+#     loss = -probs[torch.arange(len(xs)), ys].log().mean()
+#     print(loss)
+
+#     #backward pass
+#     w.grad = None #set grad to zero
+#     loss.backward()
+
+#     #update
+#     w.data += -50 * w.grad 
+
+# print(w[0])
+
+
+chars = sorted(list(set("".join(words))))
+stoi = {s:i+1 for i,s in enumerate(chars)}
+stoi['.'] = 0
+itos = {i:s for i,s in zip(stoi.values(),stoi.keys())}
+
+
+xs, ys = [], []
 
 for w in words:
-    chr = [','] + list(w) + [',']
-    for w1, w2 in zip(chr, chr[1:]):
-        xs.append(stoi[w1])
-        ys.append(stoi[w2])
-        numeex += 1
-xs = torch.tensor(xs)# input letters tensor
-ys = torch.tensor(ys)# correct output letters tensor
-print("number of examples", numeex)
+    chs = ['.'] + list(w) + ['.']
+    for ix, iy in zip(chs, chs[1:]):
+        xs.append(stoi[ix])
+        ys.append(stoi[iy])
 
+xs = torch.tensor(xs)
+ys = torch.tensor(ys)
+num = xs.nelement()
 
-# initialise random initial weights for a neuron, each neuron takes 27 inputs
-g = torch.Generator().manual_seed(2147483647)
-w = torch.randn((27,27), generator = g, requires_grad=True)
+g = torch.Generator().manual_seed(2147483642)
+W = torch.randn((27,27), generator = g, requires_grad=True)
 
 for i in range(100):
-    #forward pass
-    xenc = F.one_hot(xs, num_classes = 27).float() # encode tensor of integers into tensor of (5, 27) dims
-    logits = xenc@w
-    counts = torch.exp(logits)
-    probs = counts/counts.sum(1, keepdims = True)#probabilities for the next character
-    loss = -probs[torch.arange(len(xs)), ys].log().mean()
+    xenc = F.one_hot(xs, num_classes=27).float()
+    logits = xenc @ W
+    expi = logits.exp()
+    probs = expi/ expi.sum(1, keepdims=True)
+    loss = -probs[torch.arange(num), ys].log().mean()
     print(loss)
 
-    #backward pass
-    w.grad = None #set grad to zero
+    W.grad = None
     loss.backward()
 
-    #update
-    w.data += -50 * w.grad 
+    W.data += -40 * W.grad
 
-print(w[0])
+
+for i in range(5):
+    word = []
+    ixi = 0
+    while True:
+        sampi = F.one_hot(torch.tensor([ixi]), num_classes = 27).float()
+        logits = sampi @ W
+        counts = logits.exp()
+        probs = counts / counts.sum(1, keepdims = True)
+
+        ixi = torch.multinomial(probs, num_samples=1, replacement=True, generator=g).item()
+        word.append(itos[ixi])
+        if ixi == 0:
+            break
+
+    print(''.join(word))
