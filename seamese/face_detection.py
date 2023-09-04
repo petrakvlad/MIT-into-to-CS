@@ -1,6 +1,7 @@
 import cv2
 from mtcnn import MTCNN
 import matplotlib.pyplot as plt
+import tensorflow
 
 def get_image_with_boxes(image_path):
     # Load the input image
@@ -37,7 +38,8 @@ def detect_faces(image_path):
     
     # Extract face crops and coordinates
     face_crops = []
-    for face in faces:
+    for i, face in enumerate(faces):
+    
         x, y, width, height = face['box']
         x1, y1 = x, y
         x2, y2 = x + width, y + height
@@ -47,7 +49,7 @@ def detect_faces(image_path):
     return face_crops
 
 # Example usage:
-input_image_path = "/mnt/c/Users/Vlad/Documents/GitHub/someproj/seamese/demo_image.jpg"
+input_image_path = "/home/hell/Documents/GitHub/MIT-into-to-CS/seamese/demo_image.jpg"
 detected_faces = detect_faces(input_image_path)
 new_image = get_image_with_boxes(input_image_path)
 
