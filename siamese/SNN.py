@@ -2,7 +2,8 @@ import torch.nn as nn
 import torch
 import torch.nn.functional as F
 
-#create the Siamese Neural Network
+# sets up the architecture for a Siamese Neural Network 
+
 class SiameseNetwork(nn.Module):
 
     def __init__(self):
@@ -51,7 +52,8 @@ class SiameseNetwork(nn.Module):
     
 
 
-# Define the Contrastive Loss Function
+# contrastive loss function to distinguish between similar and dissimilar image pairs.
+
 class ContrastiveLoss(torch.nn.Module):
     def __init__(self, margin=2.0):
         super(ContrastiveLoss, self).__init__()

@@ -14,6 +14,8 @@ from SNN import ContrastiveLoss
 from helper import imshow  
 from helper import show_plot
 
+# Training of SNN
+
 
 # Load the training folder
 folder_dataset = datasets.ImageFolder(root="/home/hell/Documents/GitHub/MIT-into-to-CS/siamese/train_data")

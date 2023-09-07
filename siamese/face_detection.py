@@ -1,6 +1,10 @@
 import cv2
 from mtcnn import MTCNN
 
+# functions take an input image, use the MTCNN model to detect faces in the image, and return relevant information. 
+
+
+#returns only the face crops
 def detect_faces(image_path):
     # Load the input image
     image = cv2.imread(image_path)
@@ -23,6 +27,7 @@ def detect_faces(image_path):
 
     return face_crops
 
+# returns face crops and detected face bounding boxes
 def detect_faces_and_boxes(image_path):
     # Load the input image
     image = cv2.imread(image_path)

@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Creating some helper functions
+
 def imshow(img, text=None):
     npimg = img.cpu().numpy()
     plt.axis("off")

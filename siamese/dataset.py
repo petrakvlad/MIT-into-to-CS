@@ -4,6 +4,9 @@ import numpy as np
 import random
 from PIL import Image
 
+# Defines a custom dataset class for Siamese neural network training.
+# Returns pairs of images and labels, ensuring that approximately half of the pairs are of the same class and the other half are of different classes
+
 class SiameseNetworkDataset(Dataset):
     def __init__(self,imageFolderDataset,transform=None):
         self.imageFolderDataset = imageFolderDataset
